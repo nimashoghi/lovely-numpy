@@ -38,6 +38,9 @@ def pretty_str(x):
         fmt = f"{{:.{get_config().precision}{'e' if sci else 'f'}}}"
 
         return fmt.format(x)
+    # Complex
+    elif isinstance(x, complex):
+        return '{}+{}j'.format(pretty_str(x.real), pretty_str(x.imag))
     elif x.ndim == 0:
             return pretty_str(x.item())
     else:
@@ -83,11 +86,13 @@ def np_to_str_common(x: Union[np.ndarray, np.generic],  # Input
         return ansi_color("empty", "grey", color)
 
     zeros = ansi_color("all_zeros", "grey", color) if np.equal(x, 0.).all() and x.size > 1 else None
-    pinf = ansi_color("+Inf!", "red", color) if np.isposinf(x).any() else None
-    ninf = ansi_color("-Inf!", "red", color) if np.isneginf(x).any() else None
+    # Complex objects don't have `isposinf` or `isneginf` methods, so we just check for `isinf`.
+    inf = ansi_color("Inf!", "red", color) if np.iscomplexobj(x) and np.isinf(x).any() else None
+    pinf = ansi_color("+Inf!", "red", color) if not np.iscomplexobj(x) and np.isposinf(x).any() else None
+    ninf = ansi_color("-Inf!", "red", color) if not np.iscomplexobj(x) and np.isneginf(x).any() else None
     nan = ansi_color("NaN!", "red", color) if np.isnan(x).any() else None
 
-    attention = sparse_join([zeros,pinf,ninf,nan])
+    attention = sparse_join([zeros,inf,pinf,ninf,nan])
 
     summary=None
     if not zeros and isinstance(x, np.ndarray):

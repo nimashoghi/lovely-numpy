@@ -14,18 +14,27 @@ from .utils import pretty_str, sparse_join, np_to_str_common, in_debugger, bytes
 from .utils.config import get_config, set_config, config
 
 # %% ../nbs/00_repr_str.ipynb 6
-dtnames =   {   "float16": "f16",
-                "float32": "f32",
-                "float64": "", # Default dtype in numpy
-                "uint8": "u8",
-                "uint16": "u16",
-                "uint32": "u32",
-                "uint64": "u64",
-                "int8": "i8",
-                "int16": "i16",
-                "int32": "i32",
-                "int64": "i64",
-            }
+dtnames = {
+    "float16": "f16",
+    "float32": "f32",
+    "float64": "",  # Default dtype in numpy
+    "uint8": "u8",
+    "uint16": "u16",
+    "uint32": "u32",
+    "uint64": "u64",
+    "int8": "i8",
+    "int16": "i16",
+    "int32": "i32",
+    "int64": "i64",
+    "complex64": "c64",
+    "complex128": "c128",
+    "complex160": "c160",
+    "complex192": "c192",
+    "complex256": "c256",
+    "complex512": "c512",
+    "bool": "b",
+}
+
 
 def short_dtype(x: Union[np.ndarray, np.generic]):
     return dtnames.get(x.dtype.name, x.dtype)
@@ -46,7 +55,7 @@ def lovely( x       :Union[np.ndarray, np.generic], # The data you want to explo
 
     "Pretty-print the stats of a numpy array or scalar"
 
-    if plain or not isinstance(x, (np.ndarray, np.generic)) or np.iscomplexobj(x):
+    if plain or not isinstance(x, (np.ndarray, np.generic)):
         return plain_repr(x)
 
     conf = get_config()
