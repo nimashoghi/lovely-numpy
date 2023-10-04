@@ -28,24 +28,26 @@ def pretty_str(x):
     Works for `np.ndarray`, `torch.Tensor`, `jax.DeviceArray`, and scalars."""
 
     if isinstance(x, int):
-        return '{}'.format(x)
+        return "{}".format(x)
     elif isinstance(x, float):
-        if x == 0.:
+        if x == 0.0:
             return "0."
 
         sci = sci_mode(x) if get_config().sci_mode is None else get_config().sci_mode
-        
+
         fmt = f"{{:.{get_config().precision}{'e' if sci else 'f'}}}"
 
         return fmt.format(x)
     # Complex
     elif isinstance(x, complex):
-        return '{}+{}j'.format(pretty_str(x.real), pretty_str(x.imag))
+        imag_abs = abs(x.imag)
+        imag_sgn = "+" if x.imag >= 0 else "-"
+        return "{}{}{}j".format(pretty_str(x.real), imag_sgn, pretty_str(imag_abs))
     elif x.ndim == 0:
-            return pretty_str(x.item())
+        return pretty_str(x.item())
     else:
         slices = [pretty_str(x[i]) for i in range(0, x.shape[0])]
-        return '[' + ", ".join(slices) + ']'
+        return "[" + ", ".join(slices) + "]"
 
 # %% ../../nbs/03_utils.utils.ipynb 13
 def sparse_join(lst, sep=" "):
